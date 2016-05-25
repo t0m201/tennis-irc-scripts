@@ -2,7 +2,7 @@ from lxml import html
 import requests
 import ssl
 
-#expect command format, year followed by either a/f/w/u for grand slam
+#expected command format, year followed by either a/f/w/u for grand slam
 text = '.gs 2014 f'
 
 t = text.split('.gs')
@@ -63,3 +63,4 @@ print womens
 
 result = title + womens + ', ' + mens
 print result
+#irc.send ( 'PRIVMSG '+channel+' :'+result+'\r\n')
