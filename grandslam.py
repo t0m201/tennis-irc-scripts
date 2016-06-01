@@ -1,66 +1,55 @@
 from lxml import html
 import requests
-import ssl
 
-#expected command format, year followed by either a/f/w/u for grand slam
-text = '.gs 2014 f'
+#expect command format, year followed by either a/f/w/u for grand slam
+#text = '.gs 2014 f'
 
-t = text.split('.gs')
-t = t[1]
-t = t.split()
+def gsRes(year, slam):
+    #creating correct url name for scraping
+    if slam == 'w':
+        slam = 'Wimbledon_Championships'
+    if slam == 'u':
+        slam = 'US_Open'
+        if 1968 > int(year):
+            slam = "U.S._National_Championships"
+    if slam == 'f':
+        slam = 'French_Open'
+        if 1968 > int(year):
+            slam = "French_Championships"
+            print slam
+    if slam == 'a':
+        slam = 'Australian_Open'
+        if 1968 > int(year):
+            slam = "Australian_Championships"
+      
+    title = year + ' ' + slam + ' Results: '
 
-year = t[0]
-slam = t[1]
+    #scraping from wikipedia
+    wikiLinkM = 'http://en.wikipedia.org/wiki/' + year + '_' + slam + '_%E2%80%93_Men%27s_Singles'
+    wikiLinkW = 'http://en.wikipedia.org/wiki/' + year + '_' + slam + '_%E2%80%93_Women%27s_Singles'
 
-#creating correct url name for scraping
-if slam == 'w':
-    slam = 'Wimbledon_Championships'
-if slam == 'u':
-    slam = 'US_Open'
-    if 1968 > int(year):
-        slam = "U.S._National_Championships"
-if slam == 'f':
-    slam = 'French_Open'
-    if 1968 > int(year):
-        slam = "French_Championships"
-        print slam
-if slam == 'a':
-    slam = 'Australian_Open'
-    if 1968 > int(year):
-        slam = "Australian_Championships"
-  
-title = year + ' ' + slam + ' Results: '
+    def scrape(link):
+      page = requests.get(link)
+      tree = html.fromstring(page.content)
 
-#scraping from wikipedia
-wikiLinkM = 'http://en.wikipedia.org/wiki/' + year + '_' + slam + '_%E2%80%93_Men%27s_Singles'
-wikiLinkW = 'http://en.wikipedia.org/wiki/' + year + '_' + slam + '_%E2%80%93_Women%27s_Singles'
+      champ = tree.xpath('//div[@id="bodyContent"]/div[4]/table/tr[3]/td[1]/a/text()')
+      champ = champ[0]
+      champ = champ.encode('utf-8')
 
-def scrape(link):
-  page = requests.get(link)
-  tree = html.fromstring(page.content)
+      loser = tree.xpath('//div[@id="bodyContent"]/div[4]/table/tr[4]/td[1]/a/text()')
+      loser = loser[0]
+      loser = loser.encode('utf-8')
+      score = tree.xpath('//div[@id="bodyContent"]/div[4]/table/tr[5]/td[1]/text()')
 
-  champ = tree.xpath('//div[@id="bodyContent"]/div[4]/table/tr[3]/td[1]/a/text()')
-  champ = champ[0]
-  champ = champ.encode('utf-8')
-  print champ
-  loser = tree.xpath('//div[@id="bodyContent"]/div[4]/table/tr[4]/td[1]/a/text()')
-  loser = loser[0]
-  loser = loser.encode('utf-8')
-  print loser
-  score = tree.xpath('//div[@id="bodyContent"]/div[4]/table/tr[5]/td[1]/text()')
+      score = [w.encode('utf-8') for w in score]
+      score = ''.join(score)
+      score = score.replace("\xe2\x80\x93", "-")
+      score = score.replace(",", "")
+      scoreLine = champ + ' d. ' + loser + ' ' + score
+      return scoreLine
 
-  score = [w.encode('utf-8') for w in score]
-  score = ''.join(score)
-  score = score.replace("\xe2\x80\x93", "-")
-  score = score.replace(",", "")
-  scoreLine = champ + ' d. ' + loser + ' ' + score
-  return scoreLine
+    mens = scrape(wikiLinkM)
+    womens = scrape(wikiLinkW)
 
-mens = scrape(wikiLinkM)
-womens = scrape(wikiLinkW)
-print mens
-print womens
-
-result = title + womens + ', ' + mens
-print result
-#irc.send ( 'PRIVMSG '+channel+' :'+result+'\r\n')
+    result = title + womens + ', ' + mens
+    return result
