@@ -6,6 +6,3 @@ grandslam.py -
   
 head2head.py -
   returns the head to head stats of two tennis players. expected command would be either ".h2hw player/player" or ".h2hm player/player" for wta/atp respectively. doesnt need to take full names but needs the / separater. example: ".h2hm fed/mur" would return the head to head for federer and murray
-  
-rank.py -
-  simple script that loops through two web pages trying to match a string for a player name and it returns the players full name + their rank
