@@ -11,7 +11,7 @@ server = "chat.freenode.net"
 port = 6697
 channel = "#reddit-tennis"
 botnick = "boxbot"
-password = "fdsa"
+password = ""
 
 irc_C = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 irc = ssl.wrap_socket(irc_C)
