@@ -92,17 +92,19 @@ def head2head(rq):
 
         if sum(surfaceList) > 1:
             h2h = h2h + ': '
-            for surface in range(0, 5):
-                if surfaceList[surface] != 0:
-                    if surface == 0:
-                        h2h = h2h + str(surfaceList[surface]) + ' Clay, '
-                    if surface == 1:
-                        h2h = h2h + str(surfaceList[surface]) + ' Grass, '
-                    if surface == 2:
-                        h2h = h2h + str(surfaceList[surface]) + ' Hard, '
-                    if surface == 3:
-                        h2h = h2h + str(surfaceList[surface]) + ' Indoors, '
-                    if surface == 4:
-                        h2h = h2h + str(surfaceList[surface]) + ' Unknown surface, '
+            for num in range(0, 5):
+                if surfaceList[num] != 0:
+                    surface = (float(surfaceList[num])/float(sum(surfaceList)))*100
+                    surface = round(surface, 2)
+                    print surface
+                    if num == 0:
+                        h2h = h2h + str(surface) + '% Clay, '
+                    if num == 1:
+                        h2h = h2h + str(surface) + '% Grass, '
+                    if num == 2:
+                        h2h = h2h + str(surface) + '% Hard, '
+                    if num == 3:
+                        h2h = h2h + str(surface) + '% Indoors, '
+                    if num == 4:
+                        h2h = h2h + str(surface) + '% Unknown surface, '
             h2h = h2h[:-2]
-        return h2h
